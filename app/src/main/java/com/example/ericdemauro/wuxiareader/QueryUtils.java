@@ -2,6 +2,8 @@ package com.example.ericdemauro.wuxiareader;
 
 import android.util.Log;
 
+import org.json.JSONObject;
+
 import java.io.BufferedReader;
 import java.io.IOException;
 import java.io.InputStream;
@@ -12,6 +14,8 @@ import java.net.URL;
 import java.nio.charset.Charset;
 import java.util.ArrayList;
 import java.util.List;
+
+import fr.arnaudguyon.xmltojsonlib.XmlToJson;
 
 public final class QueryUtils {
     private static final String LOG_TAG = "utils";
@@ -29,7 +33,11 @@ public final class QueryUtils {
             e.printStackTrace();
         }
 
-        Log.d(LOG_TAG, xmlResponse);
+        XmlToJson xmlToJson = new XmlToJson.Builder(xmlResponse).build();
+
+        JSONObject jsonObject = xmlToJson.toJson();
+
+        Log.d(LOG_TAG, jsonObject.toString());
 
         List<Wuxia> wuxias = new ArrayList<>();
 
