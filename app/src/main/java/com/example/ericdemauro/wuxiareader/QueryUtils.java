@@ -1,7 +1,5 @@
 package com.example.ericdemauro.wuxiareader;
 
-import android.util.Log;
-
 import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
@@ -15,6 +13,7 @@ import java.net.MalformedURLException;
 import java.net.URL;
 import java.nio.charset.Charset;
 import java.util.ArrayList;
+import java.util.Date;
 import java.util.List;
 
 import fr.arnaudguyon.xmltojsonlib.XmlToJson;
@@ -50,8 +49,11 @@ public final class QueryUtils {
             for(int i = 0; i < entries.length(); i++) {
                 JSONObject entryData = entries.getJSONObject(i);
 
+                String dateStr = entryData.getString("pubDate");
+
                 Entry tmp = new Entry(entryData.getString("title"),
-                        entryData.getString("link"));
+                        entryData.getString("link"),
+                        new Date(dateStr));
 
                 entriesList.add(tmp);
             }

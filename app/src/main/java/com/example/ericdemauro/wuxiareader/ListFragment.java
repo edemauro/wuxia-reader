@@ -12,6 +12,8 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.TextView;
 
+import java.text.Format;
+import java.text.SimpleDateFormat;
 import java.util.List;
 
 public class ListFragment extends Fragment {
@@ -53,18 +55,24 @@ public class ListFragment extends Fragment {
             implements View.OnClickListener {
         private Entry mEntry;
 
-        private TextView mTextView;
+        private TextView mTitle;
+        private TextView mPubDate;
 
         public EntryHolder(View itemView) {
             super(itemView);
             itemView.setOnClickListener(this);
 
-            mTextView = (TextView) itemView.findViewById(R.id.text_view);
+            mTitle = (TextView) itemView.findViewById(R.id.title);
+            mPubDate = (TextView) itemView.findViewById(R.id.pub_date);
         }
 
         public void bindEntry(Entry entry) {
             mEntry = entry;
-            mTextView.setText(mEntry.getTitle());
+
+            Format formatter = new SimpleDateFormat("MM/dd/yyyy HH:mm:ss");
+
+            mTitle.setText(mEntry.getTitle());
+            mPubDate.setText(formatter.format(mEntry.getPubDate()));
         }
 
         @Override
