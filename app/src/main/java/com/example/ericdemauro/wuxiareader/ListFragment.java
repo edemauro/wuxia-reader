@@ -6,6 +6,7 @@ import android.support.annotation.Nullable;
 import android.support.v4.app.Fragment;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -37,6 +38,11 @@ public class ListFragment extends Fragment {
     }
 
     private void updateUI() {
+
+        for(Entry e : mEntries) {
+            Log.d("entry", e.toString());
+        }
+
         if(mEntryAdapter == null) {
             mEntryAdapter = new EntryAdapter(mEntries);
             mRecyclerView.setAdapter(mEntryAdapter);
@@ -56,14 +62,14 @@ public class ListFragment extends Fragment {
             mTextView = (TextView) itemView.findViewById(R.id.text_view);
         }
 
+        public void bindEntry(Entry entry) {
+            mEntry = entry;
+            mTextView.setText(mEntry.getTitle());
+        }
+
         @Override
         public void onClick(View view) {
 
-        }
-
-        public void bindEntry(Entry entry) {
-            mEntry = entry;
-            mTextView.setText("Placeholder text");
         }
     }
 
@@ -98,11 +104,12 @@ public class ListFragment extends Fragment {
 
         @Override
         protected List<Entry> doInBackground(String... urls) {
-            return mEntries = QueryUtils.fetchEntries(urls[0]);
+            return QueryUtils.fetchEntries(urls[0]);
         }
 
         @Override
         protected void onPostExecute(List<Entry> entries) {
+            mEntries = entries;
             updateUI();
         }
     }

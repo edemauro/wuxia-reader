@@ -16,4 +16,8 @@ public class Entry {
     public String getWebpage() {
         return mWebpage;
     }
+
+    public String toString() {
+        return mTitle;
+    }
 }
