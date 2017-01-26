@@ -15,9 +15,9 @@ import java.util.List;
 
 public class ListFragment extends Fragment {
     private RecyclerView mRecyclerView;
-    private WuxiaAdapter mWuxiaAdapter;
+    private EntryAdapter mEntryAdapter;
 
-    private List<Wuxia> mWuxias;
+    private List<Entry> mEntries;
 
     private static final String WUXIA_URL =
             "http://www.wuxiaworld.com/feed/";
@@ -30,26 +30,26 @@ public class ListFragment extends Fragment {
         mRecyclerView = (RecyclerView) view.findViewById(R.id.recycler_view);
         mRecyclerView.setLayoutManager(new LinearLayoutManager(getActivity()));
 
-        WuxiaAsyncTask task = new WuxiaAsyncTask();
+        EntryAsyncTask task = new EntryAsyncTask();
         task.execute(WUXIA_URL);
 
         return view;
     }
 
     private void updateUI() {
-        if(mWuxiaAdapter == null) {
-            mWuxiaAdapter = new WuxiaAdapter(mWuxias);
-            mRecyclerView.setAdapter(mWuxiaAdapter);
+        if(mEntryAdapter == null) {
+            mEntryAdapter = new EntryAdapter(mEntries);
+            mRecyclerView.setAdapter(mEntryAdapter);
         }
     }
 
-    private class WuxiaHolder extends RecyclerView.ViewHolder
+    private class EntryHolder extends RecyclerView.ViewHolder
             implements View.OnClickListener {
-        private Wuxia mWuxia;
+        private Entry mEntry;
 
         private TextView mTextView;
 
-        public WuxiaHolder(View itemView) {
+        public EntryHolder(View itemView) {
             super(itemView);
             itemView.setOnClickListener(this);
 
@@ -61,48 +61,48 @@ public class ListFragment extends Fragment {
 
         }
 
-        public void bindWuxia(Wuxia wuxia) {
-            mWuxia = wuxia;
+        public void bindEntry(Entry entry) {
+            mEntry = entry;
             mTextView.setText("Placeholder text");
         }
     }
 
-    private class WuxiaAdapter extends RecyclerView.Adapter<WuxiaHolder> {
-        private List<Wuxia> mWuxias;
+    private class EntryAdapter extends RecyclerView.Adapter<EntryHolder> {
+        private List<Entry> mEntries;
 
-        public WuxiaAdapter(List<Wuxia> wuxias) {
-            mWuxias = wuxias;
+        public EntryAdapter(List<Entry> entries) {
+            mEntries = entries;
         }
 
         @Override
-        public WuxiaHolder onCreateViewHolder(ViewGroup parent, int viewType) {
+        public EntryHolder onCreateViewHolder(ViewGroup parent, int viewType) {
             LayoutInflater layoutInflater = LayoutInflater.from(getActivity());
             View view = layoutInflater.inflate(R.layout.list_item_wuxia, parent, false);
 
-            return new WuxiaHolder(view);
+            return new EntryHolder(view);
         }
 
         @Override
-        public void onBindViewHolder(WuxiaHolder holder, int position) {
-            Wuxia wuxia = mWuxias.get(position);
-            holder.bindWuxia(wuxia);
+        public void onBindViewHolder(EntryHolder holder, int position) {
+            Entry entry = mEntries.get(position);
+            holder.bindEntry(entry);
         }
 
         @Override
         public int getItemCount() {
-            return mWuxias.size();
+            return mEntries.size();
         }
     }
 
-    private class WuxiaAsyncTask extends AsyncTask<String, Void, List<Wuxia>> {
+    private class EntryAsyncTask extends AsyncTask<String, Void, List<Entry>> {
 
         @Override
-        protected List<Wuxia> doInBackground(String... urls) {
-            return mWuxias = QueryUtils.fetchWuxias(urls[0]);
+        protected List<Entry> doInBackground(String... urls) {
+            return mEntries = QueryUtils.fetchEntries(urls[0]);
         }
 
         @Override
-        protected void onPostExecute(List<Wuxia> wuxias) {
+        protected void onPostExecute(List<Entry> entries) {
             updateUI();
         }
     }

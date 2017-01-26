@@ -1,10 +1,10 @@
 package com.example.ericdemauro.wuxiareader;
 
-public class Wuxia {
+public class Entry {
     private String mTitle;
     private String mWebpage;
 
-    public Wuxia(String title, String webpage) {
+    public Entry(String title, String webpage) {
         mTitle = title;
         mWebpage = webpage;
     }

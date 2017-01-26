@@ -2,6 +2,8 @@ package com.example.ericdemauro.wuxiareader;
 
 import android.util.Log;
 
+import org.json.JSONArray;
+import org.json.JSONException;
 import org.json.JSONObject;
 
 import java.io.BufferedReader;
@@ -22,7 +24,7 @@ public final class QueryUtils {
 
     private QueryUtils() {}
 
-    public static List<Wuxia> fetchWuxias(String webUrl) {
+    public static List<Entry> fetchEntries(String webUrl) {
         URL url = createUrl(webUrl);
 
         String xmlResponse = "";
@@ -36,12 +38,28 @@ public final class QueryUtils {
         XmlToJson xmlToJson = new XmlToJson.Builder(xmlResponse).build();
 
         JSONObject jsonObject = xmlToJson.toJson();
+        JSONArray entries = null;
 
-        Log.d(LOG_TAG, jsonObject.toString());
+        List<Entry> entriesList = new ArrayList<>();
 
-        List<Wuxia> wuxias = new ArrayList<>();
+        try {
+            entries = jsonObject.getJSONObject("rss")
+                    .getJSONObject("channel")
+                    .getJSONArray("item");
 
-        return wuxias;
+            for(int i = 0; i < entries.length(); i++) {
+                JSONObject entryData = entries.getJSONObject(i);
+
+                Entry tmp = new Entry(entryData.getString("title"),
+                        entryData.getString("link"));
+
+                entriesList.add(tmp);
+            }
+        } catch (JSONException e) {
+            e.printStackTrace();
+        }
+
+        return entriesList;
     }
 
     private static URL createUrl(String webUrl) {
