@@ -1,5 +1,7 @@
 package com.example.ericdemauro.wuxiareader;
 
+import android.content.Intent;
+import android.net.Uri;
 import android.os.AsyncTask;
 import android.os.Bundle;
 import android.support.annotation.Nullable;
@@ -77,7 +79,11 @@ public class ListFragment extends Fragment {
 
         @Override
         public void onClick(View view) {
+            Uri entryUri = Uri.parse(mEntry.getWebpage());
 
+            Intent websiteIntent = new Intent(Intent.ACTION_VIEW, entryUri);
+
+            startActivity(websiteIntent);
         }
     }
 
