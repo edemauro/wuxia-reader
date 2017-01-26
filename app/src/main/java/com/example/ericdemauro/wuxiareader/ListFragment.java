@@ -2,13 +2,13 @@ package com.example.ericdemauro.wuxiareader;
 
 import android.content.Intent;
 import android.net.Uri;
-import android.os.AsyncTask;
 import android.os.Bundle;
 import android.support.annotation.Nullable;
 import android.support.v4.app.Fragment;
+import android.support.v4.app.LoaderManager;
+import android.support.v4.content.Loader;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
-import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -16,9 +16,11 @@ import android.widget.TextView;
 
 import java.text.Format;
 import java.text.SimpleDateFormat;
+import java.util.ArrayList;
 import java.util.List;
 
-public class ListFragment extends Fragment {
+public class ListFragment extends Fragment
+        implements LoaderManager.LoaderCallbacks<List<Entry>> {
     private RecyclerView mRecyclerView;
     private EntryAdapter mEntryAdapter;
 
@@ -26,6 +28,8 @@ public class ListFragment extends Fragment {
 
     private static final String WUXIA_URL =
             "http://www.wuxiaworld.com/feed/";
+
+    private static final int ENTRY_LOADER_ID = 1;
 
     @Nullable
     @Override
@@ -35,22 +39,37 @@ public class ListFragment extends Fragment {
         mRecyclerView = (RecyclerView) view.findViewById(R.id.recycler_view);
         mRecyclerView.setLayoutManager(new LinearLayoutManager(getActivity()));
 
-        EntryAsyncTask task = new EntryAsyncTask();
-        task.execute(WUXIA_URL);
+        updateUI();
+
+        getLoaderManager().initLoader(ENTRY_LOADER_ID, null, this);
 
         return view;
     }
 
     private void updateUI() {
-
-        for(Entry e : mEntries) {
-            Log.d("entry", e.toString());
-        }
-
         if(mEntryAdapter == null) {
-            mEntryAdapter = new EntryAdapter(mEntries);
+            mEntryAdapter = new EntryAdapter(new ArrayList<Entry>());
             mRecyclerView.setAdapter(mEntryAdapter);
         }
+    }
+
+    @Override
+    public Loader<List<Entry>> onCreateLoader(int id, Bundle args) {
+        return new EntryLoader(getActivity(), WUXIA_URL);
+    }
+
+    @Override
+    public void onLoadFinished(Loader<List<Entry>> loader, List<Entry> data) {
+        mEntryAdapter.clear();
+
+        if(data != null && !data.isEmpty()) {
+            mEntryAdapter.addAll(data);
+        }
+    }
+
+    @Override
+    public void onLoaderReset(Loader<List<Entry>> loader) {
+        mEntryAdapter.clear();
     }
 
     private class EntryHolder extends RecyclerView.ViewHolder
@@ -112,19 +131,16 @@ public class ListFragment extends Fragment {
         public int getItemCount() {
             return mEntries.size();
         }
-    }
 
-    private class EntryAsyncTask extends AsyncTask<String, Void, List<Entry>> {
-
-        @Override
-        protected List<Entry> doInBackground(String... urls) {
-            return QueryUtils.fetchEntries(urls[0]);
+        public void clear() {
+            int size = this.mEntries.size();
+            this.mEntries.clear();
+            notifyItemRangeRemoved(0, size);
         }
 
-        @Override
-        protected void onPostExecute(List<Entry> entries) {
-            mEntries = entries;
-            updateUI();
+        public void addAll(List<Entry> data) {
+            mEntries.addAll(data);
+            notifyDataSetChanged();
         }
     }
 }
